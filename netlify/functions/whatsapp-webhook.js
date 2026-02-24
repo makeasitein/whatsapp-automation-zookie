@@ -1,6 +1,4 @@
-const crypto = require('crypto');
-
-exports.handler = async (event, context) => {
+export const handler = async (event, context) => {
     // META WEBHOOK VERIFICATION (GET request)
     if (event.httpMethod === 'GET') {
         const queryParams = event.queryStringParameters;
