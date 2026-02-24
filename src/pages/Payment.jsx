@@ -27,15 +27,22 @@ const Payment = () => {
         }
 
         try {
-            const response = await fetch('/.netlify/functions/create-order', { method: 'POST' });
-            const orderData = await response.json();
+            const orderRes = await fetch('/.netlify/functions/create-order', { method: 'POST' });
+            const orderData = await orderRes.json();
 
             if (!orderData || !orderData.id) {
                 throw new Error('Failed to create order');
             }
 
+            const keyRes = await fetch('/.netlify/functions/get-razorpay-key');
+            const keyData = await keyRes.json();
+
+            if (!keyData || !keyData.key) {
+                throw new Error('Failed to retrieve Razorpay Key');
+            }
+
             const options = {
-                key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'dummy_key',
+                key: keyData.key,
                 amount: orderData.amount,
                 currency: orderData.currency,
                 name: 'WhatsApp Auto',

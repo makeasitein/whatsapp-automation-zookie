@@ -8,12 +8,8 @@ const Freeform = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
 
-    const credentials = {
-        accessToken: import.meta.env.VITE_META_ACCESS_TOKEN || '',
-        wabaId: import.meta.env.VITE_META_WABA_ID || '',
-        phoneId: import.meta.env.VITE_META_PHONE_ID || ''
-    };
-
+    // Meta API Credentials are now handled securely by Netlify Functions on the backend.
+    // The VITE_ prefix is no longer required or recommended for these sensitive keys.
     const [messageText, setMessageText] = useState('');
     const [headerImage, setHeaderImage] = useState('');
 
@@ -142,11 +138,10 @@ const Freeform = () => {
                         };
                     }
 
-                    const res = await fetch(`https://graph.facebook.com/v23.0/${credentials.phoneId}/messages`, {
+                    const res = await fetch('/.netlify/functions/send-message', {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${credentials.accessToken}`
+                            'Content-Type': 'application/json'
                         },
                         body: JSON.stringify(payload)
                     });

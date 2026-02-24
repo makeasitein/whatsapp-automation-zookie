@@ -8,12 +8,8 @@ const Broadcast = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
 
-    const credentials = {
-        accessToken: import.meta.env.VITE_META_ACCESS_TOKEN || '',
-        wabaId: import.meta.env.VITE_META_WABA_ID || '',
-        phoneId: import.meta.env.VITE_META_PHONE_ID || ''
-    };
-
+    // Meta API Credentials are now handled securely by Netlify Functions on the backend.
+    // The VITE_ prefix is no longer required or recommended for these sensitive keys.
     const [templates, setTemplates] = useState([]);
     const [selectedTemplate, setSelectedTemplate] = useState(null);
     const [templateVariables, setTemplateVariables] = useState({});
@@ -30,20 +26,14 @@ const Broadcast = () => {
     const [uploadingImage, setUploadingImage] = useState(false);
 
     useEffect(() => {
-        if (credentials.accessToken && credentials.wabaId) {
-            fetchTemplates();
-        }
+        fetchTemplates();
     }, []);
 
     const fetchTemplates = async () => {
         setLoadingTemplates(true);
         setMessage('');
         try {
-            const response = await fetch(`https://graph.facebook.com/v23.0/${credentials.wabaId}/message_templates?fields=name,status,components,language,category`, {
-                headers: {
-                    'Authorization': `Bearer ${credentials.accessToken}`
-                }
-            });
+            const response = await fetch('/.netlify/functions/get-templates');
             const data = await response.json();
 
             if (data.error) throw new Error(data.error.message);
@@ -193,26 +183,16 @@ const Broadcast = () => {
                         template: templatePayload
                     };
 
-                    // Add click tracking if it is a marketing template (or always for safety)
-                    if (selectedTemplate.category === 'MARKETING') {
-                        payload.message_activity_sharing = true; // Enables click tracking
-                    }
-
-                    const endpoint = selectedTemplate.category === 'MARKETING'
-                        ? 'marketing_messages'
-                        : 'messages';
-
-                    const res = await fetch(`https://graph.facebook.com/v23.0/${credentials.phoneId}/${endpoint}`, {
+                    const res = await fetch('/.netlify/functions/send-message', {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${credentials.accessToken}`
+                            'Content-Type': 'application/json'
                         },
                         body: JSON.stringify(payload)
                     });
 
                     const result = await res.json();
-                    console.log(`Payload sent to ${contact.phone_number} via ${endpoint}:`, payload);
+                    console.log(`Payload sent to ${contact.phone_number} via messages:`, payload);
                     console.log(`Response for ${contact.phone_number}:`, result);
 
                     if (result.error) {

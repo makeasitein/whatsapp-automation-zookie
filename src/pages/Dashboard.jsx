@@ -11,22 +11,13 @@ const Dashboard = () => {
     const [loadingWabaStatus, setLoadingWabaStatus] = useState(false);
 
     useEffect(() => {
-        const wabaId = import.meta.env.VITE_META_WABA_ID;
-        const accessToken = import.meta.env.VITE_META_ACCESS_TOKEN;
-
-        if (wabaId && accessToken) {
-            fetchWabaStatus(wabaId, accessToken);
-        }
+        fetchWabaStatus();
     }, []);
 
-    const fetchWabaStatus = async (wabaId, accessToken) => {
+    const fetchWabaStatus = async () => {
         setLoadingWabaStatus(true);
         try {
-            const res = await fetch(`https://graph.facebook.com/v25.0/${wabaId}?fields=marketing_messages_onboarding_status`, {
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`
-                }
-            });
+            const res = await fetch('/.netlify/functions/get-waba-analytics');
             const data = await res.json();
             if (data && data.marketing_messages_onboarding_status) {
                 setWabaStatus(data.marketing_messages_onboarding_status);
@@ -53,23 +44,21 @@ const Dashboard = () => {
                         <h1 className="text-xl font-bold tracking-wide">WhatsApp Auto</h1>
                     </div>
 
-                    {import.meta.env.VITE_META_WABA_ID && (
-                        <div className="flex items-center gap-2 mt-1 px-3 py-1.5 bg-background-dark/30 rounded-full border border-border-color/50">
-                            {loadingWabaStatus ? (
-                                <span className="text-xs text-muted animate-pulse">Checking WABA eligibility...</span>
-                            ) : parsedStatus ? (
-                                <>
-                                    {isEligible ? <ShieldCheck size={14} className="text-success" /> : <AlertCircle size={14} className="text-warning" />}
-                                    <span className="text-xs font-medium text-muted">Marketing Messages API:</span>
-                                    <span className={`text-[11px] font-bold px-2 py-0.5 rounded-md ${isEligible ? 'bg-success/20 text-success' : 'bg-warning/20 text-warning'}`}>
-                                        {parsedStatus.replace(/_/g, ' ')}
-                                    </span>
-                                </>
-                            ) : (
-                                <span className="text-xs text-muted">WABA Eligibility: Unknown</span>
-                            )}
-                        </div>
-                    )}
+                    <div className="flex items-center gap-2 mt-1 px-3 py-1.5 bg-background-dark/30 rounded-full border border-border-color/50">
+                        {loadingWabaStatus ? (
+                            <span className="text-xs text-muted animate-pulse">Checking WABA eligibility...</span>
+                        ) : parsedStatus ? (
+                            <>
+                                {isEligible ? <ShieldCheck size={14} className="text-success" /> : <AlertCircle size={14} className="text-warning" />}
+                                <span className="text-xs font-medium text-muted">Marketing Messages API:</span>
+                                <span className={`text-[11px] font-bold px-2 py-0.5 rounded-md ${isEligible ? 'bg-success/20 text-success' : 'bg-warning/20 text-warning'}`}>
+                                    {parsedStatus.replace(/_/g, ' ')}
+                                </span>
+                            </>
+                        ) : (
+                            <span className="text-xs text-muted">WABA Eligibility: Unknown</span>
+                        )}
+                    </div>
                 </div>
                 <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
                     <span className="text-sm font-medium text-muted truncate max-w-[150px] md:max-w-none">{user?.email}</span>
