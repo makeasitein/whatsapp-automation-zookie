@@ -1,0 +1,5 @@
+Important Note:
+For the Automatic STOP handling to work, your Meta Webhook must be configured to point to your live server URL (e.g., via ngrok during development or your deployed Render URL in production) at:
+https://your-domain.com/api/webhook
+
+Ensure you have subscribed to the messages field in the Meta App Dashboard > WhatsApp > Configuration > Webhook fields.
