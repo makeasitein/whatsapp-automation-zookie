@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { CreditCard, Rocket, CheckCircle, BadgeCheck } from 'lucide-react';
+import { CreditCard, Rocket, CheckCircle, BadgeCheck, ArrowLeft } from 'lucide-react';
 
 const Payment = () => {
     const { signOut, user, profile, fetchProfile } = useAuth();
@@ -144,6 +144,9 @@ const Payment = () => {
         const validUntil = new Date(profile.valid_until).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
         return (
             <div className="flex h-screen items-center justify-center p-4 bg-background-dark flex-col animate-fade-in relative overflow-hidden">
+                <button onClick={() => navigate('/dashboard')} className="absolute top-6 left-6 flex items-center gap-2 text-muted hover:text-white transition-colors focus:outline-none z-20">
+                    <ArrowLeft size={20} /> <span className="hidden sm:inline-block">Back to Dashboard</span>
+                </button>
                 <div className="absolute top-[-10%] right-[-5%] w-96 h-96 bg-success/20 rounded-full blur-[100px] pointer-events-none"></div>
                 <div className="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-primary/10 rounded-full blur-[100px] pointer-events-none"></div>
 
@@ -207,6 +210,9 @@ const Payment = () => {
 
     return (
         <div className="flex min-h-screen items-center justify-center p-4 relative overflow-hidden bg-background-dark flex-col">
+            <button onClick={() => signOut()} className="absolute top-6 left-6 flex items-center gap-2 text-muted hover:text-white transition-colors focus:outline-none z-20">
+                    <ArrowLeft size={20} /> <span className="hidden sm:inline-block">Sign Out</span>
+            </button>
             {/* Background Gradients */}
             <div className="absolute top-[-10%] right-[-5%] w-96 h-96 bg-success/20 rounded-full blur-[100px] pointer-events-none"></div>
             <div className="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-primary/10 rounded-full blur-[100px] pointer-events-none"></div>

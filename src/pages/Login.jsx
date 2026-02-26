@@ -107,6 +107,14 @@ const Login = () => {
                     >
                         {isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
                     </button>
+                    
+                    <div className="flex justify-center gap-4 mt-8 text-xs text-muted font-light">
+                        <a href="/terms" className="hover:text-primary transition-colors">Terms</a>
+                        <span className="text-border-color">•</span>
+                        <a href="/privacy" className="hover:text-primary transition-colors">Privacy</a>
+                        <span className="text-border-color">•</span>
+                        <a href="/refund" className="hover:text-primary transition-colors">Refund Policy</a>
+                    </div>
                 </div>
             </div>
         </div>

@@ -41,7 +41,7 @@ const Dashboard = () => {
                         <div className="bg-primary-light p-2 rounded-lg">
                             <MessageSquareShare className="text-primary" size={24} />
                         </div>
-                        <h1 className="text-xl font-bold tracking-wide">WhatsApp Auto</h1>
+                        <h1 className="text-xl font-bold tracking-wide">WappBroaddcast</h1>
                     </div>
 
                     <div className="flex items-center gap-2 mt-1 px-3 py-1.5 bg-background-dark/30 rounded-full border border-border-color/50">

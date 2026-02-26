@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
 import * as xlsx from 'xlsx';
 import { PhoneNumberUtil } from 'google-libphonenumber';
-import { UploadCloud, CheckCircle2, AlertCircle, ArrowLeft, Trash2, Download } from 'lucide-react';
+import { UploadCloud, CheckCircle2, AlertCircle, ArrowLeft, Trash2, Download, Ban, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const phoneUtil = PhoneNumberUtil.getInstance();
@@ -332,54 +332,74 @@ const Contacts = () => {
                             </div>
                         </div>
 
-                        <div className="flex-1 overflow-auto max-h-[60vh] pr-2 custom-scrollbar">
+                        <div className="flex-1 overflow-auto max-h-[60vh] pr-2 custom-scrollbar rounded-lg border border-border-color bg-background-dark/30">
                             {loading ? (
                                 <div className="h-full flex flex-col justify-center items-center text-muted gap-3 py-10">
                                     <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
                                     Loading contacts...
                                 </div>
                             ) : contacts.length === 0 ? (
-                                <div className="text-center text-muted py-12 border-2 border-dashed border-border-color rounded-2xl h-full flex flex-col items-center justify-center bg-background-dark/20">
+                                <div className="text-center text-muted py-12 border-2 border-dashed border-border-color rounded-2xl h-full flex flex-col items-center justify-center bg-background-dark/20 m-4">
                                     <AlertCircle className="mb-4 opacity-40" size={48} />
                                     <p className="text-lg font-medium text-white mb-2">No contacts found</p>
                                     <p className="max-w-xs">Upload a file using the panel on the left to get started.</p>
                                 </div>
                             ) : (
-                                <div className="grid gap-4">
-                                    {contacts.map(contact => (
-                                        <div key={contact.id} className="flex justify-between items-center p-4 sm:p-5 bg-background-dark/40 border border-border-color rounded-xl hover:border-primary/50 hover:bg-background-dark/80 transition-all duration-200 group">
-                                            <div>
-                                                <div className="flex items-center gap-2 mb-1">
-                                                    <p className="font-semibold text-[1.05rem]">{contact.name}</p>
-                                                    {contact.status !== 'active' && (
-                                                        <span className="text-[10px] uppercase font-bold text-error bg-error/10 px-2 rounded-sm border border-error/20">{contact.status}</span>
-                                                    )}
-                                                </div>
-                                                <p className="text-sm font-medium text-muted tracking-wide">+{contact.phone_number}</p>
-                                            </div>
-                                            <div className="flex items-center gap-2">
-                                                <button 
-                                                    onClick={() => toggleContactStatus(contact.id, contact.status)}
-                                                    className={`p-2.5 rounded-full transition-colors focus:outline-none opacity-100 sm:opacity-0 group-hover:opacity-100 ${
-                                                        contact.status === 'active' 
-                                                        ? 'text-muted hover:text-warning hover:bg-warning/10' 
-                                                        : 'text-success hover:bg-success/10'
-                                                    }`}
-                                                    title={contact.status === 'active' ? "Block Contact" : "Unblock Contact"}
-                                                >
+                                <table className="w-full text-left border-collapse">
+                                    <thead className="bg-background-dark/80 backdrop-blur-sm sticky top-0 z-10 border-b border-border-color">
+                                        <tr>
+                                            <th className="p-4 text-xs font-bold text-muted uppercase tracking-wider">Name</th>
+                                            <th className="p-4 text-xs font-bold text-muted uppercase tracking-wider">Phone Number</th>
+                                            <th className="p-4 text-xs font-bold text-muted uppercase tracking-wider text-center">Status</th>
+                                            <th className="p-4 text-xs font-bold text-muted uppercase tracking-wider text-right">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-border-color/30">
+                                        {contacts.map((contact) => (
+                                            <tr key={contact.id} className="hover:bg-white/5 transition-colors group">
+                                                <td className="p-4 text-sm font-medium text-white">
+                                                    {contact.name || 'Unknown'}
+                                                </td>
+                                                <td className="p-4 text-sm text-muted font-mono">
+                                                    +{contact.phone_number}
+                                                </td>
+                                                <td className="p-4 text-center">
                                                     {contact.status === 'active' ? (
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" x2="19.07" y1="4.93" y2="19.07"/></svg>
+                                                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-success/10 text-success border border-success/20">
+                                                            Active
+                                                        </span>
                                                     ) : (
-                                                        <CheckCircle2 size={20} />
+                                                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-error/10 text-error border border-error/20">
+                                                            {contact.status}
+                                                        </span>
                                                     )}
-                                                </button>
-                                                <button onClick={() => handleDelete(contact.id)} className="text-muted hover:text-error bg-transparent p-2.5 rounded-full hover:bg-error/10 transition-colors focus:outline-none opacity-100 sm:opacity-0 group-hover:opacity-100" title="Delete Permanent">
-                                                    <Trash2 size={20} />
-                                                </button>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
+                                                </td>
+                                                <td className="p-4 text-right">
+                                                    <div className="flex items-center justify-end gap-2 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
+                                                        <button 
+                                                            onClick={() => toggleContactStatus(contact.id, contact.status)}
+                                                            className={`p-1.5 rounded-md transition-colors focus:outline-none ${
+                                                                contact.status === 'active' 
+                                                                ? 'text-muted hover:text-warning hover:bg-warning/10' 
+                                                                : 'text-success hover:bg-success/10 hover:text-success'
+                                                            }`}
+                                                            title={contact.status === 'active' ? "Block Contact" : "Unblock Contact"}
+                                                        >
+                                                            {contact.status === 'active' ? <Ban size={18} /> : <CheckCircle2 size={18} />}
+                                                        </button>
+                                                        <button 
+                                                            onClick={() => handleDelete(contact.id)} 
+                                                            className="p-1.5 rounded-md text-muted hover:text-error hover:bg-error/10 transition-colors focus:outline-none" 
+                                                            title="Delete Permanently"
+                                                        >
+                                                            <Trash2 size={18} />
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
                             )}
                         </div>
                     </div>
